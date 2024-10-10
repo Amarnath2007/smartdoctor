@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Medicine Reminder System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #333;
+            --light-text-color: #fff;
+            --menu-icon-color: #666;
+            --card-background: #f9f9f9;
+            --fact-background: #ffeb3b; /* Yellow background for the facts box */
+            --border-radius: 10px;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            height: 100%;
+            font-family: 'Roboto', Arial, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: var(--light-text-color);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .menu {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .menu .dots {
+            width: 25px;
+            height: 5px;
+            background-color: var(--menu-icon-color);
+            margin: 4px 0;
+            transition: all 0.3s ease;
+        }
+
+        .menu-options {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0px 5px 15px var(--shadow-color);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .menu-options a {
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: var(--light-text-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-options a:hover {
+            background-color: var(--accent-color);
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main content */
+        .container {
+            margin-top: 80px;
+            max-width: 1200px;
+            padding: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px var(--shadow-color);
+            animation: fadeContent 0.3s ease-in-out;
+            width: 100%;
+            max-width: 600px; /* Set max-width for better alignment */
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        @keyframes fadeContent {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1,
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p,
+        ol,
+        ul {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            text-align: left; /* Align text to the left for better readability */
+            padding-left: 20px; /* Add padding for better indentation */
+        }
+
+        /* Daily Health Challenge */
+        .challenge-widget {
+            background-color: var(--accent-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+            width: 100%;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        /* Random Health Facts */
+        .fact-widget {
+            background-color: var(--fact-background); /* Yellow background for facts */
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px var(--shadow-color);
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* About Section */
+        .about-section {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px var(--shadow-color);
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px; /* Set max-width for better alignment */
+        }
+
+        /* Form Styling */
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px; /* Set a max-width for better alignment */
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        form input[type="time"],
+        form input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        form button {
+            padding: 12px 20px;
+            background-color: var(--accent-color);
+            color: var(--light-text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            color: var(--light-text-color);
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--light-text-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            form {
+                max-width: 100%; /* Full width on smaller screens */
+            }
+
+            .content {
+                max-width: 100%; /* Full width for mobile */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header with Three Dot Menu -->
+    <header>
+        <div class="logo">Smart Medicine Reminder</div>
+        <div class="menu" onclick="toggleMenu(event)">
+            <div class="dots"></div>
+            <div class="dots"></div>
+            <div class="dots"></div>
+            <div class="menu-options" id="menu-options">
+                <a href="#home" onclick="showContent('home')">Home</a>
+                <a href="#set-alarm" onclick="showContent('set-alarm')">Set Alarm Time</a>
+                <a href="#change-phone" onclick="showContent('change-phone')">Change Phone No.</a>
+                <a href="#notifications" onclick="showContent('notifications')">Notifications</a>
+                <a href="#about" onclick="showContent('about')">About</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content container -->
+    <div class="container">
+        <div id="home" class="content active">
+            <h1>Home</h1>
+            <div class="challenge-widget">
+                <h2>💪 Daily Health Challenge</h2>
+                <p id="challenge-text">Today's challenge: Drink at least 8 glasses of water!</p>
+            </div>
+            <div class="fact-widget">
+                <h2>🧠 Random Health Fact</h2>
+                <p id="fact-text"></p>
+            </div>
+        </div>
+
+        <div id="set-alarm" class="content">
+            <h1>Set Alarm Time</h1>
+            <p>Set up to 6 different times per day when the alarm will trigger.</p>
+            <form id="alarm-form">
+                <label for="alarm1">Alarm 1:</label>
+                <input type="time" id="alarm1" name="alarm1">
+                <label for="alarm2">Alarm 2:</label>
+                <input type="time" id="alarm2" name="alarm2">
+                <label for="alarm3">Alarm 3:</label>
+                <input type="time" id="alarm3" name="alarm3">
+                <label for="alarm4">Alarm 4:</label>
+                <input type="time" id="alarm4" name="alarm4">
+                <label for="alarm5">Alarm 5:</label>
+                <input type="time" id="alarm5" name="alarm5">
+                <label for="alarm6">Alarm 6:</label>
+                <input type="time" id="alarm6" name="alarm6">
+                <button type="button" onclick="setAlarms()">Set Alarms</button>
+            </form>
+        </div>
+
+        <div id="change-phone" class="content">
+            <h1>Change Phone Number</h1>
+            <form id="phone-form">
+                <label for="phone-number">New Phone Number:</label>
+                <input type="tel" id="phone-number" name="phone-number" placeholder="+1234567890">
+                <button type="button" onclick="updatePhoneNumber()">Update Number</button>
+            </form>
+        </div>
+
+        <div id="notifications" class="content">
+            <h1>Notifications</h1>
+            <p>No notifications yet.</p>
+        </div>
+
+        <div id="about" class="content">
+            <h1>About the Project</h1>
+            <div class="about-section">
+                <p>The <strong>Smart Medicine Reminder System</strong> is designed to help individuals manage their medication schedules effectively. It utilizes an Arduino microcontroller to trigger alarms at user-defined times, ensuring that medications are taken consistently and on time.</p>
+                <h2>How It Works</h2>
+                <p>The system consists of a microcontroller connected to a user interface, which allows users to set alarms and receive notifications. Here’s how it works:</p>
+                <ol>
+                    <li><strong>User Interface:</strong> Users can set alarm times through a simple web interface.</li>
+                    <li><strong>Alarm Triggering:</strong> At the designated times, the system triggers an alarm to remind the user to take their medication.</li>
+                    <li><strong>SMS Notifications:</strong> If a user misses a dose, the system can send an SMS notification to a caretaker or family member, ensuring accountability.</li>
+                    <li><strong>Daily Health Challenges:</strong> The system encourages users to participate in daily health challenges to promote better health habits.</li>
+                    <li><strong>Health Facts:</strong> Users receive random health facts each time they visit the site, providing them with valuable information about wellness.</li>
+                </ol>
+                <h2>Benefits</h2>
+                <ul>
+                    <li>Improves medication adherence, reducing the risk of missed doses.</li>
+                    <li>Encourages healthier lifestyle choices through daily challenges.</li>
+                    <li>Provides users with important health information to support their wellness journey.</li>
+                    <li>Enhances communication between patients and caregivers.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Smart Medicine Reminder System</p>
+        <ul class="footer-links">
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        // Daily health challenges
+        const challenges = [
+            "Drink at least 8 glasses of water!",
+            "Take a 30-minute walk today!",
+            "Try a new healthy recipe!",
+            "Spend 10 minutes meditating.",
+            "Write down 3 things you're grateful for."
+        ];
+
+        // Random health facts
+        const facts = [
+            "Did you know that drinking water can improve your mood?",
+            "Eating fruits and vegetables can reduce your risk of chronic diseases.",
+            "Regular physical activity can help maintain a healthy weight.",
+            "Sleep is crucial for mental and physical health.",
+            "Mindfulness and meditation can reduce stress."
+        ];
+
+        // Function to display a random challenge and fact
+        function displayRandomChallengeAndFact() {
+            const challengeText = document.getElementById("challenge-text");
+            const factText = document.getElementById("fact-text");
+
+            // Get random challenge
+            const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+            challengeText.innerText = randomChallenge;
+
+            // Get random fact
+            const randomFact = facts[Math.floor(Math.random() * facts.length)];
+            factText.innerText = randomFact;
+        }
+
+        // Toggle menu function
+        function toggleMenu(event) {
+            event.stopPropagation(); // Prevent the click event from propagating to the document
+            const menuOptions = document.getElementById('menu-options');
+            menuOptions.style.display = menuOptions.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Show content and close menu
+        function showContent(id) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.getElementById(id).classList.add('active');
+
+            // Close the menu after selecting an option
+            const menuOptions = document.getElementById('menu-options');
+            menuOptions.style.display = 'none'; // Close the menu
+        }
+
+        // Close menu if clicking outside
+        document.addEventListener('click', function (event) {
+            const menuOptions = document.getElementById('menu-options');
+            if (menuOptions.style.display === 'block') {
+                menuOptions.style.display = 'none';
+            }
+        });
+
+        function setAlarms() {
+            const alarms = [];
+            for (let i = 1; i <= 6; i++) {
+                const alarm = document.getElementById(`alarm${i}`).value;
+                if (alarm) alarms.push(alarm);
+            }
+            alert('Alarms set: ' + alarms.join(', '));
+        }
+
+        function updatePhoneNumber() {
+            const phoneNumber = document.getElementById('phone-number').value;
+            alert('Phone number updated: ' + phoneNumber);
+        }
+
+        // Initialize the random challenge and fact on page load
+        window.onload = function () {
+            displayRandomChallengeAndFact();
+        }
+    </script>
+
+</body>
+
+</html>
